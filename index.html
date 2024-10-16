@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code with Current Location</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      color: #4CAF50;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    #qrcode {
+      margin: 20px 0;
+      padding: 20px;
+      border: 2px dashed #4CAF50;
+      background-color: white;
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 220px;
+      height: 220px;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    button:active {
+      background-color: #3e8e41;
+    }
+
+    footer {
+      margin-top: 20px;
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Generate QR Code for Your Current Location</h1>
+  
+  <div id="qrcode">
+    <!-- QR Code sẽ hiển thị ở đây -->
+  </div>
+
+  <button onclick="getLocation()">Get Location and Generate QR Code</button>
+
+  <footer>
+    <p>Powered by Geolocation API & QRCode.js</p>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    // Hàm lấy vị trí của người dùng
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, showError);
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
+    }
+
+    // Hiển thị vị trí dưới dạng URL Google Maps
+    function showPosition(position) {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+      const googleMapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+      
+      // Tạo mã QR cho URL Google Maps
+      generateQRCode(googleMapsUrl);
+    }
+
+    // Xử lý lỗi khi lấy vị trí
+    function showError(error) {
+      switch(error.code) {
+        case error.PERMISSION_DENIED:
+          alert("User denied the request for Geolocation.");
+          break;
+        case error.POSITION_UNAVAILABLE:
+          alert("Location information is unavailable.");
+          break;
+        case error.TIMEOUT:
+          alert("The request to get user location timed out.");
+          break;
+        case error.UNKNOWN_ERROR:
+          alert("An unknown error occurred.");
+          break;
+      }
+    }
+
+    // Hàm tạo QR code cho URL đã truyền vào
+    function generateQRCode(url) {
+      const qrCodeContainer = document.getElementById("qrcode");
+      qrCodeContainer.innerHTML = "";  // Xóa QR code cũ nếu có
+      new QRCode(qrCodeContainer, {
+        text: url,
+        width: 180,
+        height: 180,
+      });
+    }
+  </script>
+</body>
+</html>
